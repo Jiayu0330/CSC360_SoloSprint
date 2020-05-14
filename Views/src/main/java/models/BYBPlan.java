@@ -43,22 +43,19 @@ public class BYBPlan extends BusinessPlan
 		
 	}
 
-	
-
-	
 
 	// BYB version of add a new Section to the business plan
 	public void addSection(Section parent)
 	{
-		while (parent.name.getValue() != "BYB Plan")
+		while (parent.name != "BYB Plan")
 		{
-			if (parent.name.getValue() == "BYB Mission Statement")
+			if (parent.name == "BYB Mission Statement")
 			{
 				Section child = new Section("BYB Objective");
 				child.setParent(parent);
 				parent.addChild(child);
 				//parent = child;
-			} else if (parent.name.getValue() == "BYB Objective")
+			} else if (parent.name == "BYB Objective")
 			{
 				Section child = new Section("BYB Plan");
 				child.setParent(parent);

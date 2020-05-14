@@ -2,6 +2,9 @@ package views;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,7 @@ import javafx.stage.Stage;
 import main.MainBPView;
 import models.BusinessPlan;
 import models.CNTRAssessment;
+import models.MyRemote;
 import models.MyRemoteClient;
 import models.MyRemoteImpl;
 import models.Section;
@@ -39,21 +43,40 @@ public class TestTask2
 {
 	static MyRemoteImpl server;
 	static MyRemoteClient client;
+	static BusinessPlan plan;
 	
 	Stage stage;
 	
 	@BeforeAll
 	static void initialize() throws RemoteException
 	{
-		server = new MyRemoteImpl();
-//		client = new MyRemoteClient(server);
-		client = new MyRemoteClient();
 		
-		BusinessPlan plan = new CNTRAssessment();
+		try
+		{
+
+			Registry registry = LocateRegistry.createRegistry(1099);
+			server = new MyRemoteImpl();
+			
+	    	MyRemote stub = (MyRemote) UnicastRemoteObject.exportObject(server, 0);
+			registry.rebind("MyRemote", stub);
+			MyRemote serverInterface=(MyRemote) registry.lookup("MyRemote");
+			client=new MyRemoteClient();
+			
+			System.err.println("Server ready");
+			
+			serverInterface.addObserver(client);
+			
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		plan = new CNTRAssessment();
 		Section current = plan.root;
 		current.setContent("root");
 		String comment = "comment for root";
-		current.addComment("Someone", comment);
+		current.addComment("", comment);
 		plan.addSection(current);
 		current.getChildren().get(1).setContent("goal2");;
 		current = current.getChildren().get(0);
@@ -83,6 +106,9 @@ public class TestTask2
 		server.getStoredBP().add(plan2);	
 		server.addPerson("", "", "CSC", true);
 		server.addPerson("Iris", "password", "CSC", true);
+		
+		//client = new MyRemoteClient();
+		client.setServer(server);
 	}
 	
 	

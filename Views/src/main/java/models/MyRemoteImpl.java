@@ -65,13 +65,13 @@ public class MyRemoteImpl extends Observable implements MyRemote
 			{
 				try
 				{
-					Thread.sleep(5 * 1000);
+					Thread.sleep(10 * 1000);
 				} catch (InterruptedException e)
 				{
 					// ignore
 				}
 				setChanged();
-				//notifyObservers(new Date());
+				notifyObservers(new Date());
 			}
 		};
 	};
@@ -87,9 +87,9 @@ public class MyRemoteImpl extends Observable implements MyRemote
 	{
 		try
 		{
-//			Registry rmiRegistry = LocateRegistry.createRegistry(9999);
-//			MyRemote rmiService = (MyRemote) UnicastRemoteObject.exportObject(new MyRemoteImpl(), 9999);
-//			rmiRegistry.bind("MyRemote", rmiService);
+			Registry rmiRegistry = LocateRegistry.createRegistry(9999);
+			MyRemote rmiService = (MyRemote) UnicastRemoteObject.exportObject(new MyRemoteImpl(), 9999);
+			rmiRegistry.bind("MyRemote", rmiService);
 		} catch (Exception ex)
 		{
 			ex.printStackTrace();
@@ -400,7 +400,7 @@ public class MyRemoteImpl extends Observable implements MyRemote
 //		System.out.println("1" + currentSec1.getContent());
 //		System.out.println("2" + currentSec2.getContent());
 //		
-		if (currentSec1.getContent().getValue() != currentSec2.getContent().getValue())
+		if (currentSec1.content != currentSec2.content)
 		{
 			currentSec1.setDiff(true);
 			currentSec2.setDiff(true);
@@ -453,8 +453,7 @@ public class MyRemoteImpl extends Observable implements MyRemote
 
 		for (int i = 0; i < size; i++)
 		{
-			if (currentSec1.getChildren().get(i).getContent().getValue() != currentSec2.getChildren().get(i)
-					.getContent().getValue())
+			if (currentSec1.getChildren().get(i).content != currentSec2.getChildren().get(i).content)
 			{
 				currentSec1.getChildren().get(i).setDiff(true);
 				currentSec2.getChildren().get(i).setDiff(true);

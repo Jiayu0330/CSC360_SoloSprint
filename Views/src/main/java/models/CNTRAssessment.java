@@ -33,15 +33,15 @@ public class CNTRAssessment extends BusinessPlan
 	// add new section to the Assessment
 	public void addSection(Section parent)
 	{
-		while (parent.name.getValue() != "Program Goals and Student Learning Objective")
+		while (parent.name != "Program Goals and Student Learning Objective")
 		{
-			if (parent.name.getValue() == "Centre College Institutional Mission Statement")
+			if (parent.name == "Centre College Institutional Mission Statement")
 			{
 				Section child = new Section("Program Mission Statement");
 				child.setParent(parent);
 				parent.addChild(child);
 				parent = child;
-			} else if (parent.name.getValue() == "Program Mission Statement")
+			} else if (parent.name == "Program Mission Statement")
 			{
 				Section child = new Section("Program Goals and Student Learning Objective");
 				child.setParent(parent);

@@ -2,6 +2,9 @@ package views;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import javafx.stage.Stage;
 import main.MainBPView;
 import models.BusinessPlan;
 import models.CNTRAssessment;
+import models.MyRemote;
 import models.MyRemoteClient;
 import models.MyRemoteImpl;
 import models.Section;
@@ -41,17 +45,39 @@ public class TestTask1
 {
 	static MyRemoteImpl server;
 	static MyRemoteClient client;
+	static BusinessPlan plan;
 	
 	Stage stage;
 	
 	@BeforeAll
 	static void initialize() throws RemoteException
 	{
-		server = new MyRemoteImpl();
-//		client = new MyRemoteClient(server);
-		client = new MyRemoteClient();
+		try
+		{
+
+			Registry registry = LocateRegistry.createRegistry(1099);
+			server = new MyRemoteImpl();
+			
+	    	MyRemote stub = (MyRemote) UnicastRemoteObject.exportObject(server, 0);
+			registry.rebind("MyRemote", stub);
+			MyRemote serverInterface=(MyRemote) registry.lookup("MyRemote");
+			client=new MyRemoteClient();
+			
+			System.err.println("Server ready");
+			
+			serverInterface.addObserver(client);
+			
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		BusinessPlan plan = new CNTRAssessment();
+		//server = new MyRemoteImpl();
+//		client = new MyRemoteClient(server);
+		//client = new MyRemoteClient();
+		
+		plan = new CNTRAssessment();
 		Section current = plan.root;
 		current.setContent("root");
 		String comment = "comment for root";
@@ -85,6 +111,9 @@ public class TestTask1
 		server.getStoredBP().add(plan2);	
 		server.addPerson("", "", "CSC", true);
 		server.addPerson("Iris", "password", "CSC", true);
+		
+		//client = new MyRemoteClient();
+		client.setServer(server);
 	}
 	
 	
@@ -223,7 +252,7 @@ public class TestTask1
 			robot.write("2021");
 			Thread.sleep(1000);
 			robot.clickOn("#compare_confirm");
-			Thread.sleep(100000); //wait 1 min
+			Thread.sleep(10000); //wait 10 sec
 
 			
 		} catch (InterruptedException e)

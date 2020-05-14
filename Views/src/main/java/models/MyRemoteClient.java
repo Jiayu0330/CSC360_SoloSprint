@@ -21,6 +21,7 @@ public class MyRemoteClient extends UnicastRemoteObject implements RemoteObserve
 		super();
 	}
 
+
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args)
@@ -87,6 +88,7 @@ public class MyRemoteClient extends UnicastRemoteObject implements RemoteObserve
 	{
 		loginPerson = null;
 		getServer().logOut();
+		currentBP.setCurrentPersonName(null);
 		System.out.println("user logout from Client side.");
 	}
 

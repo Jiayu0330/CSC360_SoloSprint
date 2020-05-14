@@ -3,8 +3,6 @@ package models;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -12,12 +10,11 @@ public class Section implements Serializable
 {
 
 	private static final long serialVersionUID = 3004879294918214266L;
-	StringProperty name = new SimpleStringProperty();
-	StringProperty content = new SimpleStringProperty();
+	public String name;
+	public String content;
 	Section parent = null;
 	public ArrayList<Section> children =  new ArrayList<Section>();
 	boolean diff = false;
-	//ArrayList<String> comment =  new ArrayList<String>();
 	ObservableList<String> comments =FXCollections.observableArrayList();
 
 	
@@ -53,20 +50,20 @@ public class Section implements Serializable
 
 	@Override
 	public String toString() {
-		return name.getValue();
+		return getName();
 	}
 
 	// default constructor for XML
 	public Section()
 	{
 		this("default");
-		content.setValue("");
+		setContent("");
 		
 	}
 
 	public Section(String name)
 	{
-		this.name.setValue(name);
+		setName(name);
 	}
 
 	// getters and setters
@@ -87,15 +84,26 @@ public class Section implements Serializable
 		this.children = children;
 	}
 
+
+
 	public String getName()
 	{
-		return name.getValue();
+		return name;
 	}
 
-	// this is used for XML encoder, but we can never change the name of a Section
 	public void setName(String name)
 	{
-		this.name.setValue(name);
+		this.name = name;
+	}
+
+	public String getContent()
+	{
+		return content;
+	}
+
+	public void setContent(String content)
+	{
+		this.content = content;
 	}
 
 	public ArrayList<Section> getChildren()
@@ -103,15 +111,7 @@ public class Section implements Serializable
 		return children;
 	}
 
-	public StringProperty getContent()
-	{
-		return content;
-	}
 
-	public void setContent(String content)
-	{
-		this.content.setValue(content);
-	}
 	// end of getters and setters
 
 	// add child to the array list

@@ -2,6 +2,9 @@ package views;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,14 +15,13 @@ import org.testfx.framework.junit5.Start;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import main.MainBPView;
 import models.BusinessPlan;
 import models.CNTRAssessment;
+import models.MyRemote;
 import models.MyRemoteClient;
 import models.MyRemoteImpl;
 import models.Section;
@@ -39,6 +41,7 @@ public class TestTask3
 {
 	static MyRemoteImpl server;
 	static MyRemoteClient client;
+	static MyRemoteClient client2;
 	static BusinessPlan plan;
 	
 	Stage stage;
@@ -46,8 +49,38 @@ public class TestTask3
 	@BeforeAll
 	static void initialize() throws RemoteException
 	{
-		server = new MyRemoteImpl();
-		client = new MyRemoteClient();
+		
+		try
+		{
+
+			Registry registry = LocateRegistry.createRegistry(1099);
+			server = new MyRemoteImpl();
+			
+	    	MyRemote stub = (MyRemote) UnicastRemoteObject.exportObject(server, 0);
+			registry.rebind("MyRemote", stub);
+			
+			MyRemote serverInterface=(MyRemote) registry.lookup("MyRemote");
+			client=new MyRemoteClient();
+			
+			//create another client
+			MyRemote serverInterface2=(MyRemote) registry.lookup("MyRemote");
+			client2=new MyRemoteClient();
+			
+			System.err.println("Server ready");
+			
+			//add clients to server
+			serverInterface.addObserver(client);
+			serverInterface2.addObserver(client2);
+			
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//server = new MyRemoteImpl();
+		//client = new MyRemoteClient();
 		
 		plan = new CNTRAssessment();
 		Section current = plan.root;
@@ -64,7 +97,7 @@ public class TestTask3
 		plan.setDepartment("CSC");
 		plan.setYear("2020");
 		//Registry registry = LocateRegistry.createRegistry(1099);
-		server = new MyRemoteImpl();
+		//server = new MyRemoteImpl();
 		server.getStoredBP().add(plan);
 		
 		BusinessPlan plan2 = new CNTRAssessment();
@@ -83,18 +116,27 @@ public class TestTask3
 		plan2.setEdit("No");
 		server.getStoredBP().add(plan2);	
 		
-		client = new MyRemoteClient();
+		//client = new MyRemoteClient();
 		client.setServer(server);
+		client2.setServer(server);
 		
 		server.addPerson("someone", "", "CSC", true);
 		server.addPerson("", "", "CSC", true);
 		server.addPerson("Iris", "1", "CSC", true);
 		
 		//add client to server
-		server.addObserver(client);
+		//server.addObserver(client);
+		
 		
 		//assume Iris is editing plan
+		//login
+		client2.askForLogin("Iris", "1");
+		
+		//select a plan
+		client2.setCurrentBP(plan);
+		
 		plan.setCurrentPersonName("Iris");
+		
 	}
 	
 	
@@ -150,11 +192,13 @@ public class TestTask3
 			Thread.sleep(5000);
 			
 			//Iris finished editing
-			plan.setCurrentPersonName(null);
+			System.out.println("Client2 logout. Client1 can view the plan now");
+			client2.logOut();
 			
 			//can view now
 			tableV.getSelectionModel().clearAndSelect(0);
 			robot.clickOn("#cancelButton");
+			Thread.sleep(5000);
 
 			
 

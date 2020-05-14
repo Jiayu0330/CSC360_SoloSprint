@@ -1,6 +1,5 @@
 package views;
 
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -55,7 +54,8 @@ public class ShowTwoPlansController
     	if(current.children.isEmpty())
     	{		
     		area.setEditable(false);
-    		Bindings.bindBidirectional(area.textProperty(),current.getContent());
+    		area.textProperty().set(current.content);
+    		//Bindings.bindBidirectional(area.textProperty(),current.getContent());
     		v.getChildren().add(area);
 
     	}
@@ -63,7 +63,8 @@ public class ShowTwoPlansController
     	{
     		area.setEditable(false);
     		v.getChildren().add(area);
-    		Bindings.bindBidirectional(area.textProperty(),current.getContent());
+    		area.textProperty().set(current.content);
+    		//Bindings.bindBidirectional(area.textProperty(),current.getContent());
     		for(int i = 0; i<current.children.size(); i++)
     		{
     			setContent(current.getChildren().get(i), v);

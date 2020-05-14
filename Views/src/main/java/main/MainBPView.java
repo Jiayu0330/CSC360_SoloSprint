@@ -41,7 +41,7 @@ public class MainBPView extends Application
 		String comment = "comment for root";
 		current.addComment("Someone", comment);
 		plan.addSection(current);
-		current.getChildren().get(1).setContent("goal2");;
+		current.getChildren().get(1).setContent("goal2");
 		current = current.getChildren().get(0);
 		current.setContent("goal");
 		current.addChild(new Section("Program Goals and Student Learning Objective"));

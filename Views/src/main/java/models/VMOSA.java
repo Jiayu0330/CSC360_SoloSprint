@@ -39,30 +39,30 @@ public class VMOSA extends BusinessPlan implements Serializable
 
 	public void addSection (Section parent) 
 	{
-		while (parent.name.getValue() != "Action Plan")
+		while (parent.name != "Action Plan")
 		{
-			if (parent.name.getValue() == "Vision")
+			if (parent.name == "Vision")
 			{
 				Section child = new Section("Mission");
 				child.setParent(parent);
 				parent.addChild(child);
 				parent = child;
 			} 
-			else if (parent.name.getValue() == "Mission")
+			else if (parent.name == "Mission")
 			{
 				Section child = new Section("Objective");
 				child.setParent(parent);
 				parent.addChild(child);
 				parent = child;
 			} 
-			else if (parent.name.getValue() == "Objective")
+			else if (parent.name == "Objective")
 			{
 				Section child = new Section("Strategy");
 				child.setParent(parent);
 				parent.addChild(child);
 				parent = child;
 			} 
-			else if (parent.name.getValue() == "Strategy")
+			else if (parent.name == "Strategy")
 			{
 				Section child = new Section("Action Plan");
 				child.setParent(parent);

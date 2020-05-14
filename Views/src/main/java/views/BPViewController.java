@@ -3,7 +3,6 @@ package views;
 import java.io.IOException;
 import java.util.Optional;
 
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -149,7 +148,8 @@ public class BPViewController
 		TextArea area2= new TextArea();
 		area2.setId("contentText");
 		pane.setCenter(area2);
-		Bindings.bindBidirectional(area2.textProperty(),selected.getValue().getContent());
+		area2.textProperty().set(selected.getValue().content);
+		//Bindings.bindBidirectional(area2.textProperty(),selected.getValue().getContent());
     	
     	}
     	catch(Exception e)
@@ -179,7 +179,8 @@ public class BPViewController
     	if(current.children.isEmpty())
     	{	
     		TextArea area2= new TextArea();
-    		Bindings.bindBidirectional(area2.textProperty(),current.getContent());
+    		area2.textProperty().set(current.content);
+    		//Bindings.bindBidirectional(area2.textProperty(),current.getContent());
     		Vbox.getChildren().add(area2);
 
     	}
@@ -187,7 +188,8 @@ public class BPViewController
     	{
     		TextArea area= new TextArea();
     		Vbox.getChildren().add(area);
-    		Bindings.bindBidirectional(area.textProperty(),current.getContent());
+    		area.textProperty().set(current.content);
+    		//Bindings.bindBidirectional(area.textProperty(),current.getContent());
     		for(int i = 0; i<current.children.size(); i++)
     		{
     			setContent(current.getChildren().get(i));
